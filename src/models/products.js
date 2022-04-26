@@ -11,7 +11,6 @@ const getProducts = () => {
     });
   });
 };
-
 const getProductsById = (id) => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -27,7 +26,6 @@ const getProductsById = (id) => {
     );
   });
 };
-
 const getProductsByName = (name) => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -43,15 +41,21 @@ const getProductsByName = (name) => {
     );
   });
 };
-
-const postProducts = ({ id, name, description, price, stock }) => {
+const postProducts = (setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO products (id,name,description,price,stock)VALUES($1,$2,$3,$4,$5)",
-      [id, name, description, price, stock],
+      "INSERT INTO products (id, name, description, price, stock, created_at) VALUES ($1, $2, $3, $4, $5, $6)",
+      [
+        setData.id,
+        setData.name,
+        setData.description,
+        setData.price,
+        setData.stock,
+        setData.created_at,
+      ],
       (err, result) => {
         if (!err) {
-          resolve(`Product with id ${id} has been added`);
+          resolve("Success Post Data Products");
         } else {
           reject(new Error(err));
         }
@@ -59,15 +63,21 @@ const postProducts = ({ id, name, description, price, stock }) => {
     );
   });
 };
-
-const putProducts = (data) => {
+const putProducts = (id, setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "UPDATE products SET name = $1, price = $2, description = $3, stock = $4 WHERE id = $5",
-      [data.name, data.price, data.description, data.stock, data.id],
+      "UPDATE products SET name = $1, description = $2, price = $3, stock = $4, created_at = $5 WHERE id = $6",
+      [
+        setData.name,
+        setData.description,
+        setData.price,
+        setData.stock,
+        setData.created_at,
+        id,
+      ],
       (err, result) => {
         if (!err) {
-          resolve("Data berhasil diupdate");
+          resolve("Success Update Data Products");
         } else {
           reject(new Error(err));
         }
@@ -75,7 +85,6 @@ const putProducts = (data) => {
     );
   });
 };
-
 const deleteProducts = (id) => {
   return new Promise((resolve, reject) => {
     connection.query(
@@ -83,7 +92,7 @@ const deleteProducts = (id) => {
       [id],
       (err, result) => {
         if (!err) {
-          resolve(`Product with id ${id} has been deleted`);
+          resolve("Success Delete Data Products");
         } else {
           reject(new Error(err));
         }
@@ -91,7 +100,6 @@ const deleteProducts = (id) => {
     );
   });
 };
-
 module.exports = {
   getProducts,
   getProductsById,
