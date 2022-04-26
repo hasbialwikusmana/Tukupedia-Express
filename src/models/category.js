@@ -1,4 +1,5 @@
 const connection = require("../config/db");
+
 const getCategory = () => {
   return new Promise((resolve, reject) => {
     connection.query("SELECT * FROM category", (err, result) => {
@@ -25,16 +26,14 @@ const getCategoryById = (id) => {
     );
   });
 };
-const postCategory = ({ id, name_category }) => {
+const getCategoryByName = (name_category) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO category (id,name_category)VALUES($1,$2)",
-      [id, name_category],
+      "SELECT * FROM category WHERE name_category = $1",
+      [name_category],
       (err, result) => {
         if (!err) {
-          resolve(
-            `Category with id ${id} and name ${name_category} has been added`
-          );
+          resolve(result.rows);
         } else {
           reject(new Error(err));
         }
@@ -42,16 +41,29 @@ const postCategory = ({ id, name_category }) => {
     );
   });
 };
-const putCategory = (data) => {
+const postCategory = (setData) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "INSERT INTO category (id, name_category) VALUES ($1, $2)",
+      [setData.id, setData.name_category],
+      (err, result) => {
+        if (!err) {
+          resolve("Success Post Data Category");
+        } else {
+          reject(new Error(err));
+        }
+      }
+    );
+  });
+};
+const putCategory = (id, setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
       "UPDATE category SET name_category = $1 WHERE id = $2",
-      [data.name_category, data.id],
+      [setData.name_category, id],
       (err, result) => {
         if (!err) {
-          resolve(
-            `category with name ${data.name_category} and id ${data.id} has been updated`
-          );
+          resolve("Success Update Data Category");
         } else {
           reject(new Error(err));
         }
@@ -66,22 +78,7 @@ const deleteCategory = (id) => {
       [id],
       (err, result) => {
         if (!err) {
-          resolve(`Category with id ${id} has been deleted`);
-        } else {
-          reject(new Error(err));
-        }
-      }
-    );
-  });
-};
-const getCategoryByName = (name_category) => {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT * FROM category WHERE name_category = $1",
-      [name_category],
-      (err, result) => {
-        if (!err) {
-          resolve(result.rows);
+          resolve("Success Delete Data Category");
         } else {
           reject(new Error(err));
         }
