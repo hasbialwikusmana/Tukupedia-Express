@@ -1,0 +1,29 @@
+{
+  "name": "tukupedia-beginer-backend",
+  "version": "1.0.0",
+  "description": "Create website online shop beginer backend using express js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hasbialwikusmana/Tukupedia-Beginer-Backend.git"
+  },
+  "author": "Hasbi Alwi Kusmana",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hasbialwikusmana/Tukupedia-Beginer-Backend/issues"
+  },
+  "homepage": "https://github.com/hasbialwikusmana/Tukupedia-Beginer-Backend#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "express": "^4.18.0",
+    "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0",
+    "nodemon": "^2.0.15"
+  }
+}
