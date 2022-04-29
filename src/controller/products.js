@@ -1,7 +1,7 @@
 const productsModels = require("../models/products");
 const helper = require("../helper/response");
 
-exports.getProducts = async (req, res, next) => {
+exports.getProducts = async (req, res) => {
   try {
     const result = await productsModels.getProducts();
     helper.response(res, 200, "Success Get Data Products", result);
@@ -9,7 +9,7 @@ exports.getProducts = async (req, res, next) => {
     helper.response(res, 400, "Bad Request", error);
   }
 };
-exports.getProductsById = async (req, res, next) => {
+exports.getProductsById = async (req, res) => {
   try {
     const id = req.params.id;
     const result = await productsModels.getProductsById(id);
@@ -18,7 +18,7 @@ exports.getProductsById = async (req, res, next) => {
     helper.response(res, 400, "Bad Request", error);
   }
 };
-exports.postProducts = async (req, res, next) => {
+exports.postProducts = async (req, res) => {
   try {
     const setData = {
       id: req.body.id,
@@ -36,7 +36,7 @@ exports.postProducts = async (req, res, next) => {
     helper.response(res, 400, "Bad Request", error);
   }
 };
-exports.putProducts = async (req, res, next) => {
+exports.putProducts = async (req, res) => {
   try {
     const id = req.params.id;
     const setData = {
@@ -54,7 +54,7 @@ exports.putProducts = async (req, res, next) => {
     helper.response(res, 400, "Bad Request", error);
   }
 };
-exports.deleteProducts = async (req, res, next) => {
+exports.deleteProducts = async (req, res) => {
   try {
     const id = req.params.id;
     const result = await productsModels.deleteProducts(id);
@@ -63,7 +63,7 @@ exports.deleteProducts = async (req, res, next) => {
     helper.response(res, 400, "Bad Request", error);
   }
 };
-exports.getProductsByName = async (req, res, next) => {
+exports.getProductsByName = async (req, res) => {
   try {
     const name = req.params.name;
     const result = await productsModels.getProductsByName(name);
