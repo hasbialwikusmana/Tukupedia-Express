@@ -1,14 +1,18 @@
 const connection = require("../config/db");
 
-const getCategory = () => {
+const getCategory = ({ limit, offset }) => {
   return new Promise((resolve, reject) => {
-    connection.query("SELECT * FROM category", (err, result) => {
-      if (!err) {
-        resolve(result.rows);
-      } else {
-        reject(new Error(err));
+    connection.query(
+      "SELECT * FROM category LIMIT $1 OFFSET $2",
+      [limit, offset],
+      (err, result) => {
+        if (!err) {
+          resolve(result.rows);
+        } else {
+          reject(new Error(err));
+        }
       }
-    });
+    );
   });
 };
 const getCategoryById = (id) => {
@@ -46,7 +50,7 @@ const postCategory = (setData) => {
     connection.query(
       "INSERT INTO category (id, name_category) VALUES ($1, $2)",
       [setData.id, setData.name_category],
-      (err, result) => {
+      (err) => {
         if (!err) {
           resolve("Success Post Data Category");
         } else {
@@ -61,7 +65,7 @@ const putCategory = (id, setData) => {
     connection.query(
       "UPDATE category SET name_category = $1 WHERE id = $2",
       [setData.name_category, id],
-      (err, result) => {
+      (err) => {
         if (!err) {
           resolve("Success Update Data Category");
         } else {
@@ -73,18 +77,17 @@ const putCategory = (id, setData) => {
 };
 const deleteCategory = (id) => {
   return new Promise((resolve, reject) => {
-    connection.query(
-      "DELETE FROM category WHERE id = $1",
-      [id],
-      (err, result) => {
-        if (!err) {
-          resolve("Success Delete Data Category");
-        } else {
-          reject(new Error(err));
-        }
+    connection.query("DELETE FROM category WHERE id = $1", [id], (err) => {
+      if (!err) {
+        resolve("Success Delete Data Category");
+      } else {
+        reject(new Error(err));
       }
-    );
+    });
   });
+};
+const countCategory = () => {
+  return connection.query("SELECT COUNT(*) AS total FROM category");
 };
 module.exports = {
   getCategory,
@@ -93,4 +96,5 @@ module.exports = {
   putCategory,
   deleteCategory,
   getCategoryByName,
+  countCategory,
 };
