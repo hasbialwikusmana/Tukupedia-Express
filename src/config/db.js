@@ -1,16 +1,16 @@
 const { Pool } = require("pg");
 const connection = new Pool({
-  user: "postgres",
-  password: "hasbi123",
-  host: "localhost",
-  port: 5432,
-  database: "web2",
+  user: process.env.PGUSER,
+  password: process.env.PASSWORD,
+  host: process.env.PGHOST,
+  port: process.env.PGPORT,
+  database: process.env.PGDATABASE,
 });
 connection.connect((err) => {
   if (err) {
     console.log("Database not connected");
   } else {
-    console.log("Database Connected");
+    console.log(`Database connected on ${process.env.PGDATABASE}`);
   }
 });
 
