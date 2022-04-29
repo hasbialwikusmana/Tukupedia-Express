@@ -53,7 +53,7 @@ const postProducts = (setData) => {
         setData.stock,
         setData.created_at,
       ],
-      (err, result) => {
+      (err) => {
         if (!err) {
           resolve("Success Post Data Products");
         } else {
@@ -75,7 +75,7 @@ const putProducts = (id, setData) => {
         setData.created_at,
         id,
       ],
-      (err, result) => {
+      (err) => {
         if (!err) {
           resolve("Success Update Data Products");
         } else {
@@ -87,17 +87,13 @@ const putProducts = (id, setData) => {
 };
 const deleteProducts = (id) => {
   return new Promise((resolve, reject) => {
-    connection.query(
-      "DELETE FROM products WHERE id = $1",
-      [id],
-      (err, result) => {
-        if (!err) {
-          resolve("Success Delete Data Products");
-        } else {
-          reject(new Error(err));
-        }
+    connection.query("DELETE FROM products WHERE id = $1", [id], (err) => {
+      if (!err) {
+        resolve("Success Delete Data Products");
+      } else {
+        reject(new Error(err));
       }
-    );
+    });
   });
 };
 module.exports = {
