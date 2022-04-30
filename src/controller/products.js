@@ -1,79 +1,102 @@
+const createError = require("http-errors");
 const productsModels = require("../models/products");
+const errorServ = new createError.InternalServerError();
 const helper = require("../helper/response");
 
-exports.getProducts = async (req, res) => {
+exports.getProducts = async (req, res, next) => {
   try {
-    const result = await productsModels.getProducts();
-    helper.response(res, 200, "Success Get Data Products", result);
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const sort = req.query.sort;
+
+    const offset = (page - 1) * limit;
+
+    const result = await productsModels.getProducts({ sort, limit, offset });
+    const {
+      rows: [count],
+    } = await productsModels.countProducts();
+    const totalData = parseInt(count.total);
+    const totalPage = Math.ceil(totalData / limit);
+    const pagination = {
+      currentPage: page,
+      limit,
+      totalData,
+      totalPage,
+    };
+    helper.response(res, result, 200, "Success Get Products", pagination);
   } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
+    next(errorServ);
   }
 };
-exports.getProductsById = async (req, res) => {
+exports.getProductsByName = async (req, res, next) => {
+  const { keyword } = req.query;
+  const limitSearch = 10;
   try {
-    const id = req.params.id;
-    const result = await productsModels.getProductsById(id);
-    helper.response(res, 200, `Success Get Data Products By Id ${id}`, result);
+    const {
+      rows: [count],
+    } = await productsModels.countProductsByName(keyword);
+    const result = await productsModels.getProductsByName(keyword, limitSearch);
+    const search = {
+      keyword,
+      limitSearch,
+      totalData: count.total,
+    };
+    helper.response(res, result, 200, "Success Get Products By Name", search);
   } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
+    next(errorServ);
   }
 };
-exports.postProducts = async (req, res) => {
+
+exports.getProductsById = async (req, res, next) => {
+  try {
+    const products = await productsModels.getProductsById(
+      req.params.products_id
+    );
+    helper.response(res, products, 200, "Success Get Products By Id");
+  } catch (error) {
+    next(errorServ);
+  }
+};
+
+exports.postProducts = async (req, res, next) => {
   try {
     const setData = {
-      id: req.body.id,
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      stock: req.body.stock,
-      created_at: req.body.created_at,
-      // image: req.body.image,
-      // category_id: req.body.category_id,
+      products_name: req.body.products_name,
+      products_price: req.body.products_price,
+      products_stock: req.body.products_stock,
+      products_description: req.body.products_description,
+      //   products_image: req.body.products_image,
     };
     const result = await productsModels.postProducts(setData);
-    helper.response(res, 200, "Success Post Data Products", result);
+    helper.response(res, result, 200, "Success Added Products");
   } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
+    next(errorServ);
   }
 };
-exports.putProducts = async (req, res) => {
+
+exports.putProducts = async (req, res, next) => {
   try {
-    const id = req.params.id;
     const setData = {
-      name: req.body.name,
-      description: req.body.description,
-      price: req.body.price,
-      stock: req.body.stock,
-      created_at: req.body.created_at,
-      // image: req.body.image,
-      // category_id: req.body.category_id,
+      products_name: req.body.products_name,
+      products_price: req.body.products_price,
+      products_stock: req.body.products_stock,
+      products_description: req.body.products_description,
+      //   products_image: req.body.products_image,
     };
-    const result = await productsModels.putProducts(id, setData);
-    helper.response(res, 200, `Success Update Data Products ${id}`, result);
-  } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
-  }
-};
-exports.deleteProducts = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const result = await productsModels.deleteProducts(id);
-    helper.response(res, 200, `Success Delete Data Products ${id}`, result);
-  } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
-  }
-};
-exports.getProductsByName = async (req, res) => {
-  try {
-    const name = req.params.name;
-    const result = await productsModels.getProductsByName(name);
-    helper.response(
-      res,
-      200,
-      `Success Get Data Products By Name ${name}`,
-      result
+    const result = await productsModels.putProducts(
+      req.params.products_id,
+      setData
     );
+    helper.response(res, result, 200, "Success Update Products");
   } catch (error) {
-    helper.response(res, 400, "Bad Request", error);
+    next(errorServ);
+  }
+};
+exports.deleteProducts = async (req, res, next) => {
+  try {
+    const result = await productsModels.deleteProducts(req.params.products_id);
+    helper.response(res, result, 200, "Success Delete Products");
+  } catch (error) {
+    next(errorServ);
   }
 };
