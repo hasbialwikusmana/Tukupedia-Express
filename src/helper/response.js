@@ -1,11 +1,12 @@
-module.exports = {
-  response: (response, status, msg, data, pagination) => {
-    const result = {};
-    result.status = status || 200;
-    result.msg = msg;
-    result.data = data;
-    result.pagination = pagination;
+const response = (res, result, status, message, pagination) => {
+  const resultPrint = {};
+  resultPrint.statuCode = status;
+  resultPrint.data = result;
+  resultPrint.message = message || null;
+  if (pagination) resultPrint.pagination = pagination;
+  res.status(status).json(resultPrint);
+};
 
-    return response.status(result.status).json(result);
-  },
+module.exports = {
+  response,
 };
