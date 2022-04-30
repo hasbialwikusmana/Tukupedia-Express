@@ -5,8 +5,8 @@ const helper = require("../helper/response");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
     const sort = req.query.sort;
 
     const offset = (page - 1) * limit;
@@ -65,7 +65,9 @@ exports.postProducts = async (req, res, next) => {
       products_price: req.body.products_price,
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
+      category_id: req.body.category_id,
       //   products_image: req.body.products_image,
+      products_created_at: new Date(),
     };
     const result = await productsModels.postProducts(setData);
     helper.response(res, result, 200, "Success Added Products");
@@ -81,7 +83,9 @@ exports.putProducts = async (req, res, next) => {
       products_price: req.body.products_price,
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
+      category_id: req.body.category_id,
       //   products_image: req.body.products_image,
+      products_updated_at: new Date(),
     };
     const result = await productsModels.putProducts(
       req.params.products_id,

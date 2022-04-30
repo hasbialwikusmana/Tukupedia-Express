@@ -3,8 +3,8 @@ const connection = require("../config/db");
 const getProducts = ({ sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM products ORDER BY $1 ASC LIMIT $2 OFFSET $3",
-      [sort, limit, offset],
+      `SELECT * FROM products ORDER BY ${sort} LIMIT $1 OFFSET $2`,
+      [limit, offset],
       (error, result) => {
         if (!error) {
           resolve(result.rows);
@@ -51,16 +51,17 @@ const getProductsById = (products_id) => {
 const postProducts = (setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO products (products_name,products_price,products_stock,products_description) VALUES ($1,$2,$3,$4)",
+      "INSERT INTO products (products_name,products_price,products_stock,products_description,category_id) VALUES ($1,$2,$3,$4,$5)",
       [
         setData.products_name,
         setData.products_price,
         setData.products_stock,
         setData.products_description,
+        setData.category_id,
       ],
-      (err, result) => {
+      (err) => {
         if (!err) {
-          resolve(result.rows);
+          resolve("Data Succes Added");
         } else {
           reject(new Error(err));
         }
@@ -72,17 +73,19 @@ const postProducts = (setData) => {
 const putProducts = (products_id, setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "UPDATE products SET products_name = $1, products_price = $2, products_stock = $3, products_description = $4 WHERE products_id = $5",
+      "UPDATE products SET products_name = $1, products_price = $2, products_stock = $3, products_description = $4,category_id = $5, products_updated_at = $6  WHERE products_id = $7",
       [
         setData.products_name,
         setData.products_price,
         setData.products_stock,
         setData.products_description,
+        setData.category_id,
+        setData.products_updated_at,
         products_id,
       ],
-      (err, result) => {
+      (err) => {
         if (!err) {
-          resolve(result.rows);
+          resolve("Data Success Updated");
         } else {
           reject(new Error(err));
         }
@@ -92,9 +95,19 @@ const putProducts = (products_id, setData) => {
 };
 
 const deleteProducts = (products_id) => {
-  return connection.query("DELETE FROM products WHERE products_id = $1", [
-    products_id,
-  ]);
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "DELETE FROM products WHERE products_id = $1",
+      [products_id],
+      (err) => {
+        if (!err) {
+          resolve("Data Success Deleted");
+        } else {
+          reject(new Error(err));
+        }
+      }
+    );
+  });
 };
 
 const countProducts = () => {
