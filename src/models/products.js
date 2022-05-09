@@ -1,9 +1,9 @@
 const connection = require("../config/db");
 
-const getProducts = ({ sort, limit, offset }) => {
+const getProducts = ({ sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM products ORDER BY ${sort} LIMIT $1 OFFSET $2`,
+      `SELECT products.products_id, products.products_name,  products.products_price, category.category_id, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id ORDER BY ${sortBy} ${sort} LIMIT $1 OFFSET $2`,
       [limit, offset],
       (error, result) => {
         if (!error) {
@@ -16,11 +16,11 @@ const getProducts = ({ sort, limit, offset }) => {
   });
 };
 
-const getProductsByName = (keyword, limit) => {
+const getProductsByName = (keyword, limitSearch) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM products WHERE products_name LIKE $1 LIMIT $2",
-      [`%${keyword}%`, limit],
+      "SELECT products.products_id, products.products_name,  products.products_price, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name LIKE $1 LIMIT $2",
+      [`%${keyword}%`, limitSearch],
       (error, result) => {
         if (!error) {
           resolve(result.rows);
