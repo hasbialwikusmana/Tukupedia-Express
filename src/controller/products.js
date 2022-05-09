@@ -2,16 +2,21 @@ const createError = require("http-errors");
 const productsModels = require("../models/products");
 const errorServ = new createError.InternalServerError();
 const helper = require("../helper/response");
-
 exports.getProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const sort = req.query.sort;
+    const sortBy = req.query.sortBy || "products_name";
+    const sort = req.query.sort || "ASC";
 
     const offset = (page - 1) * limit;
 
-    const result = await productsModels.getProducts({ sort, limit, offset });
+    const result = await productsModels.getProducts({
+      sortBy,
+      sort,
+      limit,
+      offset,
+    });
     const {
       rows: [count],
     } = await productsModels.countProducts();
@@ -30,7 +35,7 @@ exports.getProducts = async (req, res, next) => {
 };
 exports.getProductsByName = async (req, res, next) => {
   const { keyword } = req.query;
-  const limitSearch = 10;
+  const limitSearch = req.query.limitSearch || 5;
   try {
     const {
       rows: [count],
@@ -41,7 +46,11 @@ exports.getProductsByName = async (req, res, next) => {
       limitSearch,
       totalData: count.total,
     };
-    helper.response(res, result, 200, "Success Get Products By Name", search);
+    if (result.length > 0) {
+      helper.response(res, result, 200, "Success Get Products By Name", search);
+    } else {
+      helper.response(res, result, 404, "Data Not Found", search);
+    }
   } catch (error) {
     next(errorServ);
   }
@@ -49,10 +58,12 @@ exports.getProductsByName = async (req, res, next) => {
 
 exports.getProductsById = async (req, res, next) => {
   try {
-    const products = await productsModels.getProductsById(
-      req.params.products_id
-    );
-    helper.response(res, products, 200, "Success Get Products By Id");
+    const result = await productsModels.getProductsById(req.params.products_id);
+    if (result.length > 0) {
+      helper.response(res, result, 200, "Success Get Products By Id");
+    } else {
+      helper.response(res, result, 404, "Data Not Found");
+    }
   } catch (error) {
     next(errorServ);
   }
