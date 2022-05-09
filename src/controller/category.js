@@ -30,10 +30,12 @@ exports.getCategory = async (req, res, next) => {
 
 exports.getCategoryById = async (req, res, next) => {
   try {
-    const category = await categoryModels.getCategoryById(
-      req.params.category_id
-    );
-    helper.response(res, category, 200, "Success Get Category By Id");
+    const result = await categoryModels.getCategoryById(req.params.category_id);
+    if (result.length > 0) {
+      helper.response(res, result[0], 200, "Success Get Category By Id");
+    } else {
+      helper.response(res, result, 404, "Data Not Found");
+    }
   } catch (error) {
     next(errorServ);
   }
