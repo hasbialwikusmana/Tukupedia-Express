@@ -37,7 +37,7 @@ Some of the advantages of this application are :
 1. Open app's directory in CMD or Terminal
 2. Type `npm install`
 3. Make new file a called **.env**, set up first [here](#set-up-env-file)
-4. Create a database with the name `tukupedia`, using database **postgreSQL**
+4. Create a database with the name `tukupedia`, using database in others/database tukupedia.sql **postgreSQL**
 5. Open Postman desktop application or Chrome web app extension that has installed before
 6. Choose HTTP Method and enter request url.(ex. localhost:3000/)
 7. You can see all the documentation postman [here](#Documentation-Postman)
@@ -47,17 +47,17 @@ Some of the advantages of this application are :
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-#DATABASE
+#DATABASE POSTGRESQL
 
-PGHOST="localhost"
-PGUSER="postgres"
-PGDATABASE="tukupedia"
-PGPASSWORD="hasbi123"
-PGPORT=5432
+PGHOST= //host Database
+PGUSER= //postgreSQL user
+PGDATABASE= //database name
+PGPASSWORD= //database password
+PGPORT= //database port
 
 #PORT SERVER
 
-PORT = 3000
+PORT = //exServer port
 ```
 
 ## Documentation Postman
