@@ -7,10 +7,17 @@ exports.getCategory = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
+    const sortBy = req.query.sortBy || "category_name";
+    const sort = req.query.sort || "ASC";
 
     const offset = (page - 1) * limit;
 
-    const result = await categoryModels.getCategory({ limit, offset });
+    const result = await categoryModels.getCategory({
+      sortBy,
+      sort,
+      limit,
+      offset,
+    });
     const {
       rows: [count],
     } = await categoryModels.countCategory();
