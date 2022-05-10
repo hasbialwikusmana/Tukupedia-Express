@@ -1,9 +1,10 @@
 const connection = require("../config/db");
 
-const getOrders = () => {
+const getOrders = ({ sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT orders.orders_id, orders_qty,orders_subtotal, products.products_id,products.products_name FROM orders INNER JOIN products ON orders.products_id = products.products_id",
+      `SELECT orders.orders_id, orders_qty,orders_subtotal, products.products_id,products.products_name FROM orders INNER JOIN products ON orders.products_id = products.products_id ORDER BY ${sortBy} ${sort} LIMIT $1 OFFSET $2`,
+      [limit, offset],
       (err, result) => {
         if (!err) {
           resolve(result.rows);
@@ -83,10 +84,15 @@ const deleteOrders = (orders_id) => {
   });
 };
 
+const countOrders = () => {
+  return connection.query("SELECT COUNT(*) AS total FROM orders");
+};
+
 module.exports = {
   getOrders,
   getOrderById,
   postOrders,
   putOrders,
   deleteOrders,
+  countOrders,
 };

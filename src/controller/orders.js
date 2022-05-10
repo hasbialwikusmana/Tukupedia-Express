@@ -5,8 +5,31 @@ const helper = require("../helper/response");
 
 exports.getOrders = async (req, res, next) => {
   try {
-    const result = await ordersModels.getOrders();
-    helper.response(res, result, 200, "Success get all orders");
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const sortBy = req.query.sortBy || "orders_id";
+    const sort = req.query.sort || "ASC";
+
+    const offset = (page - 1) * limit;
+
+    const result = await ordersModels.getOrders({
+      sortBy,
+      sort,
+      limit,
+      offset,
+    });
+    const {
+      rows: [count],
+    } = await ordersModels.countOrders();
+    const totalData = parseInt(count.total);
+    const totalPage = Math.ceil(totalData / limit);
+    const pagination = {
+      currentPage: page,
+      limit,
+      totalData,
+      totalPage,
+    };
+    helper.response(res, result, 200, "Success Get Orders", pagination);
   } catch (error) {
     next(errorServ);
   }
