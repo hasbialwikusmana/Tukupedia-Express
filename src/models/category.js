@@ -1,9 +1,9 @@
 const connection = require("../config/db");
 
-const getCategory = ({ limit, offset }) => {
+const getCategory = ({ sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT * FROM category LIMIT $1 OFFSET $2",
+      ` SELECT * FROM category ORDER BY ${sortBy} ${sort} LIMIT $1 OFFSET $2`,
       [limit, offset],
       (error, result) => {
         if (!error) {
