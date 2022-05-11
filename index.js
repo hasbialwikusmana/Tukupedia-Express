@@ -15,7 +15,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(routerNavigation);
+app.use("/v1", routerNavigation);
 
 app.all("*", (req, res, next) => {
   next(new createError.NotFound());

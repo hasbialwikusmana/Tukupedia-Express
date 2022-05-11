@@ -1,7 +1,7 @@
 const createError = require("http-errors");
 const ordersModels = require("../models/orders");
 const errorServ = new createError.InternalServerError();
-const helper = require("../helper/response");
+const helper = require("../../../helper/response");
 
 exports.getOrders = async (req, res, next) => {
   try {

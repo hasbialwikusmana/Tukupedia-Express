@@ -1,7 +1,7 @@
 const createError = require("http-errors");
 const productsModels = require("../models/products");
 const errorServ = new createError.InternalServerError();
-const helper = require("../helper/response");
+const helper = require("../../../helper/response");
 exports.getProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;

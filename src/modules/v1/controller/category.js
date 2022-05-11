@@ -1,7 +1,7 @@
 const createError = require("http-errors");
 const categoryModels = require("../models/category");
 const errorServ = new createError.InternalServerError();
-const helper = require("../helper/response");
+const helper = require("../../../helper/response");
 
 exports.getCategory = async (req, res, next) => {
   try {

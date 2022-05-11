@@ -1,4 +1,4 @@
-const connection = require("../config/db");
+const connection = require("../../../config/db");
 
 const getProducts = ({ sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
