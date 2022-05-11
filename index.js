@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use("/v1", routerNavigation);
+app.use("/v2", routerNavigation);
 
 app.all("*", (req, res, next) => {
   next(new createError.NotFound());
