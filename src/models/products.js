@@ -19,7 +19,7 @@ const getProducts = ({ sortBy, sort, limit, offset }) => {
 const getProductsByName = (keyword, limitSearch) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT products.products_id, products.products_name,  products.products_price, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name LIKE $1 LIMIT $2",
+      "SELECT products.products_id, products.products_name,  products.products_price, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name ILIKE $1 LIMIT $2",
       [`%${keyword}%`, limitSearch],
       (error, result) => {
         if (!error) {
