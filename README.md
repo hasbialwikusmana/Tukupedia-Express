@@ -32,6 +32,14 @@ Some of the advantages of this application are :
 3. <a href="https://www.getpostman.com/">Postman</a>
 4. Web Server (ex. localhost)
 
+## Installation Version 2 (Intermediate Backend)
+
+5. <a href="https://www.npmjs.com/package/cors">CORS</a>
+6. <a href="https://www.npmjs.com/package/jsonwebtoken">JsonWebToken</a>
+7. <a href="https://www.npmjs.com/package/bcryptjs">bcryptjs</a>
+8. <a href="https://www.npmjs.com/package/multer">Multer</a>
+9. <a href="https://www.npmjs.com/package/redis">Redis</a>
+
 ## How to run the app ?
 
 1. Open app's directory in CMD or Terminal
