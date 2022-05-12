@@ -8,15 +8,16 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const PORT = process.env.PORT || 5000;
 const app = express();
-const routerNavigation = require("./src");
+const routerNavigationv1 = require("./src/routerNavigationV1");
+const routerNavigationv2 = require("./src/routerNavigationV2");
 
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use("/v1", routerNavigation);
-app.use("/v2", routerNavigation);
+app.use("/v1", routerNavigationv1);
+app.use("/v2", routerNavigationv2);
 
 app.all("*", (req, res, next) => {
   next(new createError.NotFound());
