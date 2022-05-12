@@ -66,3 +66,17 @@ exports.login = async (req, res, next) => {
     next(errorServ);
   }
 };
+
+exports.profile = async (req, res, next) => {
+  try {
+    const { users_email } = req.payload.users_email;
+    const {
+      rows: [users],
+    } = await usersModels.getUsersByEmail(users_email);
+    delete users.users_password;
+    helper.response(res, users, 200, "success get profile");
+  } catch (error) {
+    console.log(error);
+    next(errorServ);
+  }
+};
