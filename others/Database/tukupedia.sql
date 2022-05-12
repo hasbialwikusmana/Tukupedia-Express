@@ -32,7 +32,6 @@ SELECT products.*, category.category_name AS category FROM products INNER JOIN c
 
 CREATE TABLE orders (
   orders_id INT PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
---   history_id int NOT NULL,
   products_id int NOT NULL,
   orders_qty int NOT NULL,
   orders_subtotal int NOT NULL
@@ -40,26 +39,17 @@ CREATE TABLE orders (
   orders_updated_at timestamp
 )
 
-history orders
-
-CREATE TABLE history ( history_id INT PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
-history_invoice INT NOT NULL,
-orders_id INT,
-history_subtotal INT NOT NULL,
-history_created_at timestamp DEFAULT current_timestamp,
-history_updated_at timestamp
-)
 
 //USER
 
 CREATE TABLE users(
-users_id INT PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
+users_id VARCHAR(64) PRIMARY KEY NOT NULL,
 users_name VARCHAR(64) NOT NULL,
-users_image VARCHAR (255) NOT NULL,
+users_image VARCHAR (255),
 users_email VARCHAR (64) NOT NULL,
-users_password VARCHAR (20) NOT NULL,
-users_phone VARCHAR (20) NOT NULL,
-users_storeName VARCHAR (64) NULL,
-users_role INT NOT NULL,
+users_password VARCHAR (100) NOT NULL,
+users_phone VARCHAR (20),
+users_storeName VARCHAR (64),
+users_role INT,
 users_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 users_updated_at TIMESTAMP )
