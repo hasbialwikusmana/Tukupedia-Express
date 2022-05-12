@@ -16,11 +16,16 @@ const getUsersByEmail = async (users_email) => {
   });
 };
 
-const create = async (data) => {
+const create = async ({
+  users_id,
+  users_email,
+  users_password,
+  users_name,
+}) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO users (users_id, users_email, users_password, users_name) VALUES ($1, $2, $3, $4)",
-      [data.users_id, data.users_email, data.users_password, data.users_name],
+      "INSERT INTO users (users_id,users_email,users_password,users_name) VALUES ($1,$2,$3,$4)",
+      [users_id, users_email, users_password, users_name],
       (err, result) => {
         if (!err) {
           resolve(result);

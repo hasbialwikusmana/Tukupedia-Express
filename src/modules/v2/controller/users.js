@@ -17,14 +17,14 @@ exports.register = async (req, res, next) => {
     if (rowCount) {
       return next(createError(403, "user sudah terdaftar"));
     }
-    const data = {
+    const setData = {
       users_id: uuidv4(),
       users_email,
       users_password: hashPassword,
       users_name,
     };
-    await usersModels.create(data);
-    helper.response(res, null, 200, "success register");
+    const result = await usersModels.create(setData);
+    helper.response(res, result, 201, "success register");
   } catch (error) {
     console.log(error);
     next(errorServ);
