@@ -3,7 +3,7 @@ const createError = require("http-errors");
 
 const generateToken = (payload) => {
   const verifyOption = {
-    expiresIn: "1h",
+    expiresIn: process.env.TOKEN_EXPIRES,
   };
   const token = jwt.sign(
     {
