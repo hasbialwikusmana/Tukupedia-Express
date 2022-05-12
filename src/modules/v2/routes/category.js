@@ -1,7 +1,8 @@
 const router = require("express").Router();
 const categoryController = require("../controller/category");
+const { protect } = require("../middlewares/auth");
 
-router.get("/", categoryController.getCategory);
+router.get("/", protect, categoryController.getCategory);
 router.get("/:category_id", categoryController.getCategoryById);
 router.post("/", categoryController.postCategory);
 router.put("/:category_id", categoryController.putCategory);
