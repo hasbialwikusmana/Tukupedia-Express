@@ -1,9 +1,9 @@
 const router = require("express").Router();
 
 // version 1 for beginer backend
-const products = require("./modules/v1/routes/products");
-const category = require("./modules/v1/routes/category");
-const orders = require("./modules/v1/routes/orders");
+const products = require("./modules/V1/routes/products");
+const category = require("./modules/V1/routes/category");
+const orders = require("./modules/V1/routes/orders");
 
 router
   .use("/products", products)
