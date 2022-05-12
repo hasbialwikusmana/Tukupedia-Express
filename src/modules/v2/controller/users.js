@@ -15,7 +15,7 @@ exports.register = async (req, res, next) => {
     console.log(hashPassword);
 
     if (rowCount) {
-      return next(createError(403, "user sudah terdaftar"));
+      return next(createError(403, "users already exists"));
     }
     const setData = {
       users_id: uuidv4(),
@@ -25,6 +25,32 @@ exports.register = async (req, res, next) => {
     };
     const result = await usersModels.create(setData);
     helper.response(res, result, 201, "success register");
+  } catch (error) {
+    console.log(error);
+    next(errorServ);
+  }
+};
+
+exports.login = async (req, res, next) => {
+  try {
+    const { users_email, users_password } = req.body;
+    const {
+      rows: [users],
+    } = await usersModels.getUsersByEmail(users_email);
+    // console.log(users);
+    if (!users) {
+      return next(createError(403, "Email or password is wrong"));
+    } else {
+      const checkPassword = await bcrypt.compare(
+        users_password,
+        users.users_password
+      );
+      if (!checkPassword) {
+        return next(createError(403, "Email or password is wrong"));
+      }
+      delete users.users_password;
+      helper.response(res, users, 201, "success login");
+    }
   } catch (error) {
     console.log(error);
     next(errorServ);
