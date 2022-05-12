@@ -4,6 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const usersModels = require("../models/users");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
+const auth = require("../middlewares/auth");
 
 exports.register = async (req, res, next) => {
   try {
@@ -49,6 +50,15 @@ exports.login = async (req, res, next) => {
         return next(createError(403, "Email or password is wrong"));
       }
       delete users.users_password;
+
+      const payload = {
+        users_email: users.users_email,
+        users_role: users.users_role,
+      };
+
+      // generate token jwt
+      users.token = auth.generateToken(payload);
+
       helper.response(res, users, 201, "success login");
     }
   } catch (error) {
