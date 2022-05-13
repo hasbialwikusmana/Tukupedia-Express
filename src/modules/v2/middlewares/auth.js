@@ -1,20 +1,6 @@
 const jwt = require("jsonwebtoken");
 const createError = require("http-errors");
 
-const generateToken = (payload) => {
-  const verifyOption = {
-    expiresIn: process.env.TOKEN_EXPIRES,
-  };
-  const token = jwt.sign(
-    {
-      payload,
-    },
-    process.env.SECRET_KEY,
-    verifyOption
-  );
-  return token;
-};
-
 const protect = (req, res, next) => {
   try {
     let token;
@@ -25,32 +11,32 @@ const protect = (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
 
       let decoded = jwt.verify(token, process.env.SECRET_KEY);
+      // let decoded = jwt.verify(token, 'rahasia');
+      // console.log(decoded);
       req.decoded = decoded;
       next();
     } else {
-      next(createError(400, "Please login to access this page"));
+      next(createError(400, "server need token"));
     }
   } catch (error) {
     console.log(error.name);
-    if (error.name === "JsonWebTokenError") {
-      next(createError(400, "Token is invalid"));
-    } else if (error.name === "TokenExpiredError") {
-      next(createError(400, "Token is expired"));
+    // console.log(error);
+    if (error && error.name === "JsonWebTokenError") {
+      next(createError(400, "token invalid"));
+    } else if (error && error.name === "TokenExpiredError") {
+      next(createError(400, "token expired"));
     } else {
       next(createError(400, "Token not active"));
     }
   }
 };
-
 const isAdmin = (req, res, next) => {
-  if (req.decoded.users_role !== 1) {
-    return next(createError(400, "You are not access to this admin page"));
+  if (req.decoded.role !== "admin") {
+    return next(createError(400, "admin only"));
   }
   next();
 };
-
 module.exports = {
-  generateToken,
   protect,
   isAdmin,
 };

@@ -1,82 +1,99 @@
 const createError = require("http-errors");
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
-const usersModels = require("../models/users");
+const jwt = require("jsonwebtoken");
+const { getUsersByEmail, create } = require("../models/users");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
-const auth = require("../middlewares/auth");
+const auth = require("../../../helper/auth");
 
-exports.register = async (req, res, next) => {
+const register = async (req, res, next) => {
   try {
     const { users_email, users_password, users_name } = req.body;
-    const { rowCount } = await usersModels.getUsersByEmail(users_email);
+    const { rowCount } = await getUsersByEmail(users_email);
     // console.log(rowCount);
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(users_password, salt);
     console.log(hashPassword);
-
     if (rowCount) {
-      return next(createError(403, "users already exists"));
+      return next(createError(403, "email already exist"));
     }
-    const setData = {
-      users_id: uuidv4(),
+    const data = {
+      id: uuidv4(),
       users_email,
       users_password: hashPassword,
       users_name,
+      users_role: 2,
     };
-    const result = await usersModels.create(setData);
-    helper.response(res, result, 201, "success register");
+    await create(data);
+    helper.response(res, null, 201, "you are successfully registered");
   } catch (error) {
     console.log(error);
     next(errorServ);
   }
 };
-
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const { users_email, users_password } = req.body;
     const {
       rows: [users],
-    } = await usersModels.getUsersByEmail(users_email);
-    // console.log(users);
+    } = await getUsersByEmail(users_email);
+    // const user = rows[0]
     if (!users) {
-      return next(createError(403, "Email or password is wrong"));
-    } else {
-      const checkPassword = await bcrypt.compare(
-        users_password,
-        users.users_password
-      );
-      if (!checkPassword) {
-        return next(createError(403, "Email or password is wrong"));
-      }
-      delete users.users_password;
-
-      const payload = {
-        users_email: users.users_email,
-        users_role: users.users_role,
-      };
-
-      // generate token jwt
-      users.token = auth.generateToken(payload);
-
-      helper.response(res, users, 201, "success login");
+      return helper.response(res, null, 403, "email or password is wrong");
     }
+    const checkPassword = bcrypt.compareSync(
+      users_password,
+      users.users_password
+    );
+    if (!checkPassword) {
+      return helper.response(res, null, 403, "email or password is wrong");
+    }
+    delete users.users_password;
+
+    const payload = {
+      users_email: users.users_email,
+      users_role: users.users_role,
+    };
+    // generate token
+    users.token = auth.generateToken(payload);
+    users.refreshToken = auth.generateRefreshToken(payload);
+
+    helper.response(res, users, 201, "successfully login");
   } catch (error) {
     console.log(error);
     next(errorServ);
   }
 };
+const profile = async (req, res, next) => {
+  const users_email = req.decoded.users_email;
+  const {
+    rows: [users],
+  } = await getUsersByEmail(users_email);
+  delete users.users_password;
+  helper.response(res, users, 200, "Success get profile");
+};
 
-exports.profile = async (req, res, next) => {
-  try {
-    const { users_email } = req.payload.users_email;
-    const {
-      rows: [users],
-    } = await usersModels.getUsersByEmail(users_email);
-    delete users.users_password;
-    helper.response(res, users, 200, "success get profile");
-  } catch (error) {
-    console.log(error);
-    next(errorServ);
-  }
+const refreshToken = async (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
+  const decoded = jwt.verify(
+    refreshToken,
+    process.env.SECRET_KEY_REFRESH_TOKEN
+  );
+  const payload = {
+    users_email: decoded.users_email,
+    users_role: decoded.users_role,
+  };
+  const result = {
+    token: auth.generateToken(payload),
+    refreshToken: auth.generateRefreshToken(payload),
+  };
+  helper.response(res, result, 200);
+};
+
+module.exports = {
+  register,
+  login,
+  profile,
+  refreshToken,
 };
