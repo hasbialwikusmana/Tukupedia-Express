@@ -1,10 +1,10 @@
 const connection = require("../../../config/db");
 
-const getCategory = ({ sortBy, sort, limit, offset }) => {
+const getCategory = ({ search, sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      ` SELECT * FROM category ORDER BY ${sortBy} ${sort} LIMIT $1 OFFSET $2`,
-      [limit, offset],
+      ` SELECT * FROM category WHERE category_name = $1 ORDER BY ${sortBy} ${sort} LIMIT $2 OFFSET $3`,
+      [`%${search}%`, limit, offset],
       (error, result) => {
         if (!error) {
           resolve(result.rows);

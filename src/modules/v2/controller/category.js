@@ -9,10 +9,12 @@ exports.getCategory = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 5;
     const sortBy = req.query.sortBy || "category_name";
     const sort = req.query.sort || "ASC";
+    const search = req.query.search || "";
 
     const offset = (page - 1) * limit;
 
     const result = await categoryModels.getCategory({
+      search,
       sortBy,
       sort,
       limit,
