@@ -2,16 +2,20 @@ const express = require("express");
 require("dotenv").config();
 
 const helmet = require("helmet");
+const restify = require("restify");
+const xss = require("xss-clean");
 const cors = require("cors");
 const createError = require("http-errors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const PORT = process.env.PORT || 5000;
-const app = express();
+const app = express().restify.createServer();
 const routerNavigationv1 = require("./src/routerNavigationV1");
 const routerNavigationv2 = require("./src/routerNavigationV2");
 
 app.use(helmet());
+app.use(restify.bodyParser());
+app.use(xss());
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
