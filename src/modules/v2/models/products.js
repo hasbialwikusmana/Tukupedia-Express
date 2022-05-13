@@ -1,26 +1,10 @@
 const connection = require("../../../config/db");
 
-const getProducts = ({ sortBy, sort, limit, offset }) => {
+const getProducts = ({ search, sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT products.products_id, products.products_name,  products.products_price, category.category_id, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id ORDER BY ${sortBy} ${sort} LIMIT $1 OFFSET $2`,
-      [limit, offset],
-      (error, result) => {
-        if (!error) {
-          resolve(result.rows);
-        } else {
-          reject(new Error(error));
-        }
-      }
-    );
-  });
-};
-
-const getProductsByName = (keyword, limitSearch) => {
-  return new Promise((resolve, reject) => {
-    connection.query(
-      "SELECT products.products_id, products.products_name,  products.products_price, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name ILIKE $1 LIMIT $2",
-      [`%${keyword}%`, limitSearch],
+      `SELECT products.products_id, products.products_name,  products.products_price, category.category_id, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name ILIKE $1 ORDER BY ${sortBy} ${sort} LIMIT $2 OFFSET $3`,
+      [`%${search}%`, limit, offset],
       (error, result) => {
         if (!error) {
           resolve(result.rows);
@@ -113,20 +97,12 @@ const deleteProducts = (products_id) => {
 const countProducts = () => {
   return connection.query("SELECT COUNT(*) AS total FROM products");
 };
-const countProductsByName = (search) => {
-  return connection.query(
-    "SELECT COUNT(*) AS total FROM products WHERE products_name LIKE $1",
-    [`%${search}%`]
-  );
-};
 
 module.exports = {
   getProducts,
-  getProductsByName,
   getProductsById,
   postProducts,
   putProducts,
   deleteProducts,
   countProducts,
-  countProductsByName,
 };

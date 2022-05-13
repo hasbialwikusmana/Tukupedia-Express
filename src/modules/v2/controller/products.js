@@ -8,10 +8,12 @@ exports.getProducts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 5;
     const sortBy = req.query.sortBy || "products_name";
     const sort = req.query.sort || "ASC";
+    const search = req.query.search || "";
 
     const offset = (page - 1) * limit;
 
     const result = await productsModels.getProducts({
+      search,
       sortBy,
       sort,
       limit,
@@ -28,28 +30,10 @@ exports.getProducts = async (req, res, next) => {
       totalData,
       totalPage,
     };
-    helper.response(res, result, 200, "Success Get Products", pagination);
-  } catch (error) {
-    next(errorServ);
-  }
-};
-exports.getProductsByName = async (req, res, next) => {
-  const { keyword } = req.query;
-  const limitSearch = req.query.limitSearch || 5;
-  try {
-    const {
-      rows: [count],
-    } = await productsModels.countProductsByName(keyword);
-    const result = await productsModels.getProductsByName(keyword, limitSearch);
-    const search = {
-      keyword,
-      limitSearch,
-      totalData: count.total,
-    };
     if (result.length > 0) {
-      helper.response(res, result, 200, "Success Get Products By Name", search);
+      helper.response(res, result, 200, "Success Get Products", pagination);
     } else {
-      helper.response(res, result, 404, "Data Not Found", search);
+      next(createError(404, "Products not found"));
     }
   } catch (error) {
     next(errorServ);
