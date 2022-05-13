@@ -4,7 +4,7 @@ CREATE TABLE products(
     products_id INT NOT NULL GENERATED ALWAYS AS IDENTITY,
     products_name VARCHAR(64) NOT NULL,
     products_description VARCHAR(255) NULL,
-    -- products_images VARCHAR(50) NULL,
+    products_images VARCHAR(100),
     products_stock INT DEFAULT 0,
     products_price INT DEFAULT 0,
     category_id INT,
@@ -34,10 +34,10 @@ CREATE TABLE orders (
   orders_id INT PRIMARY KEY NOT NULL GENERATED ALWAYS AS IDENTITY,
   products_id int NOT NULL,
   orders_qty int NOT NULL,
-  orders_subtotal int NOT NULL
-  orders_created_at timestamp DEFAULT current_timestamp,
-  orders_updated_at timestamp
-)
+  orders_subtotal int NOT NULL,
+  orders_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  orders_updated_at TIMESTAMP
+);
 
 
 //USER
@@ -51,5 +51,6 @@ users_password VARCHAR (100) NOT NULL,
 users_phone VARCHAR (20),
 users_storeName VARCHAR (64),
 users_role INT,
+users_status INT,
 users_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-users_updated_at TIMESTAMP )
+users_updated_at TIMESTAMP );
