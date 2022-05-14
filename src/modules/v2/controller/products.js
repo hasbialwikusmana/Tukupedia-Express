@@ -64,16 +64,9 @@ exports.postProducts = async (req, res, next) => {
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
       category_id: req.body.category_id,
-      products_images: `${req.get("host")}/uploads/${req.file.filename}`,
+      products_images: `${req.get("host")}/img/${req.file.filename}`,
       products_created_at: new Date(),
     };
-    if (setData.products_name === "") {
-      return next(createError(400, "Name is required"));
-    } else if (setData.products_images === "") {
-      setData.products_images = `${req.get(
-        "host"
-      )}/uploads/default-products.jpg`;
-    }
     const result = await productsModels.postProducts(setData);
     helper.response(res, result, 200, "Success Added Products");
   } catch (error) {
