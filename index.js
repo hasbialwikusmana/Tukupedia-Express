@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
+app.use("/img", express.static("./uploads"));
 app.use("/v1", routerNavigationv1);
 app.use("/v2", routerNavigationv2);
 
