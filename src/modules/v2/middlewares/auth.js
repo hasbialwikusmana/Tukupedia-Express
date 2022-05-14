@@ -16,7 +16,7 @@ const protect = (req, res, next) => {
       req.decoded = decoded;
       next();
     } else {
-      next(createError(400, "server need token"));
+      next(createError(400, "please login first"));
     }
   } catch (error) {
     console.log(error.name);
@@ -26,17 +26,38 @@ const protect = (req, res, next) => {
     } else if (error && error.name === "TokenExpiredError") {
       next(createError(400, "token expired"));
     } else {
-      next(createError(400, "Token not active"));
+      next(createError(400, "token not active"));
     }
   }
 };
+
+const isQuest = (req, res, next) => {
+  if (req.decoded.role === 0) {
+    next();
+  }
+};
 const isAdmin = (req, res, next) => {
-  if (req.decoded.role !== "admin") {
-    return next(createError(400, "admin only"));
+  if (req.decoded.users_role !== 1) {
+    return next(createError(400, "you are not admin"));
+  }
+  next();
+};
+const isSeller = (req, res, next) => {
+  if (req.decoded.users_role !== 2) {
+    return next(createError(400, "you are not seller"));
+  }
+  next();
+};
+const isCustomer = (req, res, next) => {
+  if (req.decoded.users_role !== 3) {
+    return next(createError(400, "you are not customer"));
   }
   next();
 };
 module.exports = {
   protect,
+  isQuest,
   isAdmin,
+  isSeller,
+  isCustomer,
 };
