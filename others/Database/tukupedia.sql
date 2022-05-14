@@ -3,7 +3,7 @@
 CREATE TABLE products(
     products_id INT NOT NULL GENERATED ALWAYS AS IDENTITY,
     products_name VARCHAR(64) NOT NULL,
-    products_description VARCHAR(255) NULL,
+    products_description VARCHAR(255),
     products_images VARCHAR(100),
     products_stock INT DEFAULT 0,
     products_price INT DEFAULT 0,
