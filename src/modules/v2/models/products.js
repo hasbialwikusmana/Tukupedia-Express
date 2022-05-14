@@ -3,7 +3,7 @@ const connection = require("../../../config/db");
 const getProducts = ({ search, sortBy, sort, limit, offset }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT products.products_id, products.products_name,  products.products_price, category.category_id, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name ILIKE $1 ORDER BY ${sortBy} ${sort} LIMIT $2 OFFSET $3`,
+      `SELECT products.*,  category.category_id, category.category_name, products.products_created_at, products.products_updated_at FROM products INNER JOIN category ON products.category_id = category.category_id WHERE products.products_name ILIKE $1 ORDER BY ${sortBy} ${sort} LIMIT $2 OFFSET $3`,
       [`%${search}%`, limit, offset],
       (error, result) => {
         if (!error) {
@@ -35,10 +35,11 @@ const getProductsById = (products_id) => {
 const postProducts = (setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO products (products_name,products_price,products_stock,products_description,category_id) VALUES ($1,$2,$3,$4,$5)",
+      "INSERT INTO products (products_name,products_price,products_images,products_stock,products_description,category_id) VALUES ($1,$2,$3,$4,$5,$6)",
       [
         setData.products_name,
         setData.products_price,
+        setData.products_images,
         setData.products_stock,
         setData.products_description,
         setData.category_id,
@@ -57,10 +58,11 @@ const postProducts = (setData) => {
 const putProducts = (products_id, setData) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "UPDATE products SET products_name = $1, products_price = $2, products_stock = $3, products_description = $4,category_id = $5, products_updated_at = $6  WHERE products_id = $7",
+      "UPDATE products SET products_name = $1, products_price = $2, products_images = $3, products_stock = $4, products_description = $5,category_id = $6, products_updated_at = $7  WHERE products_id = $8",
       [
         setData.products_name,
         setData.products_price,
+        setData.products_images,
         setData.products_stock,
         setData.products_description,
         setData.category_id,
