@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+// const fs = require("fs");
 const productsModels = require("../models/products");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
@@ -42,7 +43,8 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getProductsById = async (req, res, next) => {
   try {
-    const result = await productsModels.getProductsById(req.params.products_id);
+    const { products_id } = req.params;
+    const result = await productsModels.getProductsById(products_id);
     if (result.length > 0) {
       helper.response(res, result, 200, "Success Get Products By Id");
     } else {
@@ -55,15 +57,23 @@ exports.getProductsById = async (req, res, next) => {
 
 exports.postProducts = async (req, res, next) => {
   try {
+    console.log(req.file);
     const setData = {
       products_name: req.body.products_name,
       products_price: req.body.products_price,
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
       category_id: req.body.category_id,
-      //   products_image: req.body.products_image,
+      products_images: `${req.get("host")}/uploads/${req.file.filename}`,
       products_created_at: new Date(),
     };
+    if (setData.products_name === "") {
+      return next(createError(400, "Name is required"));
+    } else if (setData.products_images === "") {
+      setData.products_images = `${req.get(
+        "host"
+      )}/uploads/default-products.jpg`;
+    }
     const result = await productsModels.postProducts(setData);
     helper.response(res, result, 200, "Success Added Products");
   } catch (error) {
@@ -79,14 +89,20 @@ exports.putProducts = async (req, res, next) => {
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
       category_id: req.body.category_id,
-      //   products_image: req.body.products_image,
       products_updated_at: new Date(),
     };
-    const result = await productsModels.putProducts(
-      req.params.products_id,
-      setData
-    );
-    helper.response(res, result, 200, "Success Update Products");
+    if (req.body.file !== undefined) {
+      setData.products_images = req.body.file.filename;
+    }
+    if (setData.products_name === "") {
+      return helper.response(res, 400, "Name cannot be empty");
+    } else if (setData.products_price === "") {
+      return helper.response(res, 400, "Price cannot be empty");
+    } else if (setData.products_stock === "") {
+      return helper.response(res, 400, "Stock cannot be empty");
+    } else if (setData.category_id === "") {
+      return helper.response(res, 400, "Category cannot be empty");
+    }
   } catch (error) {
     next(errorServ);
   }
