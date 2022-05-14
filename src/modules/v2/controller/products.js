@@ -57,7 +57,7 @@ exports.getProductsById = async (req, res, next) => {
 
 exports.postProducts = async (req, res, next) => {
   try {
-    console.log(req.file);
+    // console.log(req.file);
     const setData = {
       products_name: req.body.products_name,
       products_price: req.body.products_price,
