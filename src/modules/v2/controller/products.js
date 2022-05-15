@@ -1,5 +1,5 @@
 const createError = require("http-errors");
-// const fs = require("fs");
+const fs = require("fs");
 const productsModels = require("../models/products");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
@@ -82,28 +82,40 @@ exports.putProducts = async (req, res, next) => {
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
       category_id: req.body.category_id,
+      products_images: `${req.get("host")}/img/${req.file.filename}`,
       products_updated_at: new Date(),
     };
-    if (req.body.file !== undefined) {
-      setData.products_images = req.body.file.filename;
-    }
-    if (setData.products_name === "") {
-      return helper.response(res, 400, "Name cannot be empty");
-    } else if (setData.products_price === "") {
-      return helper.response(res, 400, "Price cannot be empty");
-    } else if (setData.products_stock === "") {
-      return helper.response(res, 400, "Stock cannot be empty");
-    } else if (setData.category_id === "") {
-      return helper.response(res, 400, "Category cannot be empty");
+    const { products_id } = req.params;
+    const checkId = await productsModels.getProductsById(products_id);
+    if (checkId.length > 0) {
+      const result = await productsModels.putProducts(setData, products_id);
+      fs.unlink(`./uploads/${checkId[0].products_images}`, (err) => {
+        if (err) throw err;
+        console.log("File Deleted");
+      });
+      helper.response(res, result, 200, "Success Update Products");
+    } else {
+      return helper.response(res, null, 404, "Data Not Found");
     }
   } catch (error) {
     next(errorServ);
   }
 };
+
 exports.deleteProducts = async (req, res, next) => {
   try {
-    const result = await productsModels.deleteProducts(req.params.products_id);
-    helper.response(res, result, 200, "Success Delete Products");
+    const { products_id } = req.params;
+    const checkId = await productsModels.getProductsById(products_id);
+    if (checkId.length > 0) {
+      const result = await productsModels.deleteProducts(products_id);
+      fs.unlink(`./uploads/${checkId[0].products_images}`, (err) => {
+        if (err) throw err;
+        console.log("File Deleted");
+      });
+      helper.response(res, result, 200, "Success Delete Products");
+    } else {
+      helper.response(res, null, 404, "Data Not Found");
+    }
   } catch (error) {
     next(errorServ);
   }
