@@ -32,7 +32,7 @@ const protect = (req, res, next) => {
 };
 
 const isQuest = (req, res, next) => {
-  if (req.decoded.role === 0) {
+  if (req.decoded.users_role === 0) {
     next();
   }
 };
