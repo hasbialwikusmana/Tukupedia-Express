@@ -34,7 +34,7 @@ const register = async (req, res, next) => {
 };
 const login = async (req, res, next) => {
   try {
-    const { users_email, users_password } = req.body;
+    const { users_email, users_password, users_role } = req.body;
     const {
       rows: [users],
     } = await getUsersByEmail(users_email);
@@ -52,8 +52,8 @@ const login = async (req, res, next) => {
     delete users.users_password;
 
     const payload = {
-      users_email: users.users_email,
-      users_role: users.users_role,
+      users_email: users_email,
+      users_role: users_role,
     };
     // generate token
     users.token = auth.generateToken(payload);
@@ -66,29 +66,39 @@ const login = async (req, res, next) => {
   }
 };
 const profile = async (req, res, next) => {
-  const users_email = req.decoded.users_email;
-  const {
-    rows: [users],
-  } = await getUsersByEmail(users_email);
-  delete users.users_password;
-  helper.response(res, users, 200, "Success get profile");
+  try {
+    const users_email = req.decoded.users_email;
+    const {
+      rows: [users],
+    } = await getUsersByEmail(users_email);
+    delete users.users_password;
+    helper.response(res, users, 200, "Success get profile");
+  } catch (error) {
+    console.log(error);
+    next(errorServ);
+  }
 };
 
 const refreshToken = async (req, res, next) => {
-  const refreshToken = req.body.refreshToken;
-  const decoded = jwt.verify(
-    refreshToken,
-    process.env.SECRET_KEY_REFRESH_TOKEN
-  );
-  const payload = {
-    users_email: decoded.users_email,
-    users_role: decoded.users_role,
-  };
-  const result = {
-    token: auth.generateToken(payload),
-    refreshToken: auth.generateRefreshToken(payload),
-  };
-  helper.response(res, result, 200);
+  try {
+    const refreshToken = req.body.refreshToken;
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.SECRET_KEY_REFRESH_TOKEN
+    );
+    const payload = {
+      users_email: decoded.users_email,
+      users_role: decoded.users_role,
+    };
+    const result = {
+      token: auth.generateToken(payload),
+      refreshToken: auth.generateRefreshToken(payload),
+    };
+    helper.response(res, result, 200);
+  } catch (error) {
+    console.log(error);
+    next(errorServ);
+  }
 };
 
 module.exports = {
