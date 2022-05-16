@@ -25,10 +25,11 @@ const create = async ({
   users_phone,
   users_storename,
   users_role,
+  users_status,
 }) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "INSERT INTO users (users_id, users_email, users_password, users_name, users_image, users_phone, users_storename, users_role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+      "INSERT INTO users (users_id, users_email, users_password, users_name, users_image, users_phone, users_storename, users_role, users_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
       [
         users_id,
         users_email,
@@ -38,6 +39,7 @@ const create = async ({
         users_phone,
         users_storename,
         users_role,
+        users_status,
       ],
       (err, result) => {
         if (!err) {

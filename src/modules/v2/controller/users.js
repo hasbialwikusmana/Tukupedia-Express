@@ -7,6 +7,8 @@ const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
 const auth = require("../../../helper/auth");
 
+// let refreshToken = {};
+
 const register = async (req, res, next) => {
   try {
     const {
@@ -22,10 +24,10 @@ const register = async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(users_password, salt);
     // console.log(hashPassword);
-    if (rowCount) {
-      return next(createError(403, "email already exist"));
-    }
-    const data = {
+    // if (rowCount) {
+    //   return next(createError(403, "email already exist"));
+    // }
+    const setData = {
       users_id: uuidv4(),
       users_email,
       users_password: hashPassword,
@@ -34,9 +36,14 @@ const register = async (req, res, next) => {
       users_phone,
       users_storename,
       users_role,
+      users_status: 0,
     };
-
-    await create(data);
+    if (setData.users_name === "") {
+      return helper.response(res, null, 403, "name is required");
+    } else if (rowCount) {
+      return helper.response(res, null, 403, "email already exist");
+    }
+    await create(setData);
     helper.response(res, null, 201, "you are successfully registered");
   } catch (error) {
     console.log(error);
@@ -66,12 +73,17 @@ const login = async (req, res, next) => {
     const payload = {
       users_email: users_email,
       users_role: users_role,
+      users_status: users.users_status,
     };
-    // generate token
-    users.token = auth.generateToken(payload);
-    users.refreshToken = auth.generateRefreshToken(payload);
-
-    helper.response(res, users, 201, "successfully login");
+    console.log(payload);
+    if (payload.users_status === 0) {
+      return helper.response(res, null, 403, "you are not active");
+    } else {
+      // generate token
+      users.token = auth.generateToken(payload);
+      users.refreshToken = auth.generateRefreshToken(payload);
+      helper.response(res, users, 201, "successfully login");
+    }
   } catch (error) {
     console.log(error);
     next(errorServ);
