@@ -9,12 +9,19 @@ const auth = require("../../../helper/auth");
 
 const register = async (req, res, next) => {
   try {
-    const { users_email, users_password, users_name, users_role } = req.body;
+    const {
+      users_email,
+      users_password,
+      users_name,
+      users_phone,
+      users_storename,
+      users_role,
+    } = req.body;
     const { rowCount } = await getUsersByEmail(users_email);
     // console.log(rowCount);
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(users_password, salt);
-    console.log(hashPassword);
+    // console.log(hashPassword);
     if (rowCount) {
       return next(createError(403, "email already exist"));
     }
@@ -23,6 +30,9 @@ const register = async (req, res, next) => {
       users_email,
       users_password: hashPassword,
       users_name,
+      users_image: `${req.get("host")}/img/default-users.png`,
+      users_phone,
+      users_storename,
       users_role,
     };
 
@@ -33,6 +43,7 @@ const register = async (req, res, next) => {
     next(errorServ);
   }
 };
+
 const login = async (req, res, next) => {
   try {
     const { users_email, users_password, users_role } = req.body;
