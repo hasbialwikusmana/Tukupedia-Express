@@ -8,8 +8,8 @@ router.get("/:products_id", productsController.getProductsById);
 router.post(
   "/",
   protect,
-  uploads,
   isAdminOrSeller,
+  uploads,
   productsController.postProducts
 );
 router.put(
