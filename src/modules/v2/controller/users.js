@@ -23,7 +23,7 @@ const register = async (req, res, next) => {
       users_email,
       users_password: hashPassword,
       users_name,
-      users_role: users_role,
+      users_role,
     };
 
     await create(data);

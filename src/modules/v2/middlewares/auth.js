@@ -32,16 +32,16 @@ const protect = (req, res, next) => {
 };
 
 const isCustomer = (req, res, next) => {
-  if (req.decoded.users_role !== 2) {
-    return next(createError(400, "you are not seller"));
-  } else {
+  if (req.decoded.users_role === 2 && req.decoded.users_role === 1) {
     next();
+  } else {
+    next(createError(400, "you are not access this page"));
   }
 };
 
 const isAdminOrSeller = (req, res, next) => {
   if (req.decoded.users_role !== 1) {
-    return next(createError(400, "you are not admin"));
+    return next(createError(400, "you are not access this page"));
   }
   next();
 };
