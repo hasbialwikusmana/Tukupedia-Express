@@ -67,6 +67,24 @@ exports.postProducts = async (req, res, next) => {
       products_images: `${req.get("host")}/img/${req.file.filename}`,
       products_created_at: new Date(),
     };
+    if (setData.products_name === "") {
+      return helper.response(res, null, 400, "Please Insert Name Product");
+    } else if (setData.products_price === "") {
+      return helper.response(res, null, 400, "Please Insert Price Product");
+    } else if (setData.products_stock === "") {
+      return helper.response(res, null, 400, "Please Insert Stock Product");
+    } else if (setData.products_description === "") {
+      return helper.response(
+        res,
+        null,
+        400,
+        "Please Insert Description Product"
+      );
+    } else if (setData.category_id === "") {
+      return helper.response(res, null, 400, "Please Insert Category Product");
+    } else if (setData.products_images === "") {
+      return helper.response(res, null, 400, "Please Insert Image Product");
+    }
     const result = await productsModels.postProducts(setData);
     helper.response(res, result, 200, "Success Added Products");
   } catch (error) {
@@ -82,14 +100,14 @@ exports.putProducts = async (req, res, next) => {
       products_stock: req.body.products_stock,
       products_description: req.body.products_description,
       category_id: req.body.category_id,
-      products_images: `${req.get("host")}/img/${req.file.filename}`,
+      products_images: req.file.filename,
       products_updated_at: new Date(),
     };
     const { products_id } = req.params;
     const checkId = await productsModels.getProductsById(products_id);
     if (checkId.length > 0) {
       const result = await productsModels.putProducts(setData, products_id);
-      fs.unlink(`./uploads/${checkId[0].products_images}`, (err) => {
+      fs.unlink(`./img/${checkId[0].products_images}`, (err) => {
         if (err) throw err;
         console.log("File Deleted");
       });
