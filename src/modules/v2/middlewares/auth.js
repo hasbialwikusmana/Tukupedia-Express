@@ -31,7 +31,7 @@ const protect = (req, res, next) => {
   }
 };
 
-const isSeller = (req, res, next) => {
+const isCustomer = (req, res, next) => {
   if (req.decoded.users_role !== 2) {
     return next(createError(400, "you are not seller"));
   } else {
@@ -48,5 +48,5 @@ const isAdminOrSeller = (req, res, next) => {
 module.exports = {
   protect,
   isAdminOrSeller,
-  isSeller,
+  isCustomer,
 };
