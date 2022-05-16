@@ -1,12 +1,28 @@
 const router = require("express").Router();
 const productsController = require("../controller/products");
-const { protect } = require("../middlewares/auth");
+const { protect, isAdminOrSeller } = require("../middlewares/auth");
 const uploads = require("../middlewares/multer");
 
-router.get("/", protect, productsController.getProducts);
+router.get("/", productsController.getProducts);
 router.get("/:products_id", productsController.getProductsById);
-router.post("/", uploads, productsController.postProducts);
-router.put("/:products_id", productsController.putProducts);
-router.delete("/:products_id", productsController.deleteProducts);
+router.post(
+  "/",
+  protect,
+  uploads,
+  isAdminOrSeller,
+  productsController.postProducts
+);
+router.put(
+  "/:products_id",
+  protect,
+  isAdminOrSeller,
+  productsController.putProducts
+);
+router.delete(
+  "/:products_id",
+  protect,
+  isAdminOrSeller,
+  productsController.deleteProducts
+);
 
 module.exports = router;

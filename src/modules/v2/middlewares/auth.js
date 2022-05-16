@@ -31,33 +31,22 @@ const protect = (req, res, next) => {
   }
 };
 
-const isQuest = (req, res, next) => {
-  if (req.decoded.users_role === 0) {
+const isSeller = (req, res, next) => {
+  if (req.decoded.users_role !== 2) {
+    return next(createError(400, "you are not seller"));
+  } else {
     next();
   }
 };
-const isAdmin = (req, res, next) => {
+
+const isAdminOrSeller = (req, res, next) => {
   if (req.decoded.users_role !== 1) {
     return next(createError(400, "you are not admin"));
   }
   next();
 };
-const isSeller = (req, res, next) => {
-  if (req.decoded.users_role !== 2) {
-    return next(createError(400, "you are not seller"));
-  }
-  next();
-};
-const isCustomer = (req, res, next) => {
-  if (req.decoded.users_role !== 3) {
-    return next(createError(400, "you are not customer"));
-  }
-  next();
-};
 module.exports = {
   protect,
-  isQuest,
-  isAdmin,
+  isAdminOrSeller,
   isSeller,
-  isCustomer,
 };
