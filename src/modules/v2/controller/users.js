@@ -9,7 +9,7 @@ const auth = require("../../../helper/auth");
 
 const register = async (req, res, next) => {
   try {
-    const { users_email, users_password, users_name } = req.body;
+    const { users_email, users_password, users_name, users_role } = req.body;
     const { rowCount } = await getUsersByEmail(users_email);
     // console.log(rowCount);
     const salt = bcrypt.genSaltSync(10);
@@ -19,12 +19,13 @@ const register = async (req, res, next) => {
       return next(createError(403, "email already exist"));
     }
     const data = {
-      id: uuidv4(),
+      users_id: uuidv4(),
       users_email,
       users_password: hashPassword,
       users_name,
-      users_role: 2,
+      users_role: users_role,
     };
+
     await create(data);
     helper.response(res, null, 201, "you are successfully registered");
   } catch (error) {
