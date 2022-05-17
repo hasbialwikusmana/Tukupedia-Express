@@ -7,7 +7,7 @@ const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
 const auth = require("../../../helper/auth");
 
-// let refreshToken = {};
+// let refreshTokens = {};
 
 const register = async (req, res, next) => {
   try {
@@ -18,6 +18,7 @@ const register = async (req, res, next) => {
       users_phone,
       users_storename,
       users_role,
+      users_status,
     } = req.body;
     const { rowCount } = await getUsersByEmail(users_email);
     // console.log(rowCount);
@@ -36,7 +37,7 @@ const register = async (req, res, next) => {
       users_phone,
       users_storename,
       users_role,
-      users_status: 0,
+      users_status: users_status,
     };
     if (setData.users_name === "") {
       return helper.response(res, null, 403, "name is required");
@@ -75,7 +76,7 @@ const login = async (req, res, next) => {
       users_role: users_role,
       users_status: users.users_status,
     };
-    console.log(payload);
+    // console.log(payload);
     if (payload.users_status === 0) {
       return helper.response(res, null, 403, "you are not active");
     } else {
