@@ -6,6 +6,7 @@ const { getUsersByEmail, create } = require("../models/users");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
 const auth = require("../../../helper/auth");
+const { sendMail } = require("../middlewares/mail");
 
 // let refreshTokens = {};
 
@@ -18,7 +19,6 @@ const register = async (req, res, next) => {
       users_phone,
       users_storename,
       users_role,
-      users_status,
     } = req.body;
     const { rowCount } = await getUsersByEmail(users_email);
     // console.log(rowCount);
@@ -37,7 +37,7 @@ const register = async (req, res, next) => {
       users_phone,
       users_storename,
       users_role,
-      users_status: users_status,
+      users_status: 0,
     };
     if (setData.users_name === "") {
       return helper.response(res, null, 403, "name is required");
@@ -45,6 +45,7 @@ const register = async (req, res, next) => {
       return helper.response(res, null, 403, "email already exist");
     }
     await create(setData);
+    sendMail(users_email);
     helper.response(res, null, 201, "you are successfully registered");
   } catch (error) {
     console.log(error);
