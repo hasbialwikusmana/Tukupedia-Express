@@ -2,9 +2,14 @@ const router = require("express").Router();
 const productsController = require("../controller/products");
 const { protect, isAdminOrSeller } = require("../middlewares/auth");
 const uploads = require("../middlewares/multer");
+const { hitCacheProductsDetail } = require("../middlewares/redis");
 
 router.get("/", productsController.getProducts);
-router.get("/:products_id", productsController.getProductsById);
+router.get(
+  "/:products_id",
+  hitCacheProductsDetail,
+  productsController.getProductsById
+);
 router.post(
   "/",
   protect,

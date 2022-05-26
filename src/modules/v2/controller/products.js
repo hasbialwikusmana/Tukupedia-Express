@@ -3,6 +3,7 @@ const fs = require("fs");
 const productsModels = require("../models/products");
 const errorServ = new createError.InternalServerError();
 const helper = require("../../../helper/response");
+const client = require("../../../config/redis");
 exports.getProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -43,13 +44,10 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getProductsById = async (req, res, next) => {
   try {
-    const { products_id } = req.params;
+    const products_id = req.params.products_id;
     const result = await productsModels.getProductsById(products_id);
-    if (result.length > 0) {
-      helper.response(res, result, 200, "Success Get Products By Id");
-    } else {
-      helper.response(res, result, 404, "Data Not Found");
-    }
+    client.setEx(`products/${products_id}`, 60 * 60, JSON.stringify(result));
+    helper.response(res, result, 200, "Get data dari database");
   } catch (error) {
     next(errorServ);
   }
@@ -107,7 +105,7 @@ exports.putProducts = async (req, res, next) => {
     const checkId = await productsModels.getProductsById(products_id);
     if (checkId.length > 0) {
       const result = await productsModels.putProducts(setData, products_id);
-      fs.unlink(`./img/${checkId[0].products_images}`, (err) => {
+      fs.unlink(`./uploads/${checkId[0].products_images}`, (err) => {
         if (err) throw err;
         console.log("File Deleted");
       });
