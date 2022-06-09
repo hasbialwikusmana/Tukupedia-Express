@@ -1,18 +1,5 @@
 //PRODUCTS
 
-CREATE TABLE products(
-    products_id INT NOT NULL GENERATED ALWAYS AS IDENTITY,
-    products_name VARCHAR(64) NOT NULL,
-    products_description VARCHAR(255),
-    products_images VARCHAR(100),
-    products_stock INT DEFAULT 0,
-    products_price INT DEFAULT 0,
-    category_id INT,
-    products_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    products_updated_at TIMESTAMP,
-    PRIMARY KEY(products_id)
-);
-
 INSERT INTO products (products_name, products_description,products_images, category_id)VALUES('mie goreng', 'rasa kari ayam',#, 1),('mie rebus', 'rasa soto',#, 1),('jus mangga', 'dingin',#, 2),('jus apel', 'dingin',#, 2),('jus jeruk', 'dingin',#, 2),('bakso bakar', 'pedas',#, 3);
 
 //CATEGORY
